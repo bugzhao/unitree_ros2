@@ -48,8 +48,16 @@ cd ..
 colcon build --packages-select cyclonedds #Compile cyclone-dds package
 
 source /opt/ros/humble/setup.bash # source ROS2 environment
+
+for virtual enviroment:
+pip install empy==3.3.2
+conda install -c conda-forge catkin_pkg empy lark
+pip install numpy -i https://pypi.tuna.tsinghua.edu.cn/simple
 colcon build # Compile all packages in the workspace
-```
+
+for others
+sudo apt-get install python3-catkin-pkg
+colcon build # Compile all packages in the workspace
 
 ## Connect to Unitree robot
 
