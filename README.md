@@ -1,71 +1,53 @@
-Unitree robot ROS2 support
-
-[TOC]
-
-# Introduction
-Unitree SDK2 implements an easy-to-use robot communication mechanism based on Cyclonedds, which enable developers to achieve robot communication and control (**Supports Unitree Go2, B2, and H1**). See: https://github.com/unitreerobotics/unitree_sdk2
-
-DDS is alos used in ROS2 as a communication mechanism. Therefore, the underlying layers of Unitree Go2, B2, and H1 robots can be compatible with ROS2. ROS2 msg can be direct used for communication and control of Unitree robot without wrapping the SDK interface.
-
-# Configuration
-## System requirements
-Tested systems and ROS2 distro
 |systems|ROS2 distro|
 |--|--|
 |Ubuntu 20.04|foxy|
 |Ubuntu 22.04|humble|
 
-Taking ROS2 foxy as an example, if you need another version of ROS2, replace "foxy" with the current ROS2 version name in the corresponding place:
 
+(1) install ros2
 The installation of ROS2 foxy can refer to: https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
 
-ctrl+alt+T open the terminal, clone the repository: https://github.com/unitreerobotics/unitree_ros2
+1-1
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+sudo apt update && sudo apt install curl -y
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+sudo apt update
+sudo apt upgrade
 
-```bash
+1-2
+sudo apt install ros-humble-desktop python3-argcomplete
+sudo apt install ros-humble-ros-base
+sudo apt install ros-dev-tools
+
+1-3
+# Replace ".bash" with your shell if you're not using bash
+# Possible values are: setup.bash, setup.sh, setup.zsh
+source /opt/ros/humble/setup.bash
+
+
+2 git clone codes
+
+2-1
 git clone https://github.com/unitreerobotics/unitree_ros2
-```
-where:
-- **cyclonedds_ws**: The workspace of Unitree ros2 package. The msg for Unitree robot are supplied in the subfolder cyclonedds_ws/unitree/unitree_go and cyclonedds_ ws/unitree/unitree_api.
-- **example**: The workspace of some examples.
-
-
-## Install Unitree ROS2 package
-
-### 1. Dependencies
-```bash
-sudo apt install ros-foxy-rmw-cyclonedds-cpp
-sudo apt install ros-foxy-rosidl-generator-dds-idl
+sudo apt install ros-humble-rmw-cyclonedds-cpp
+sudo apt install ros-humble-rosidl-generator-dds-idl
 ```
 
-### 2. Compile cyclone dds
-The cyclonedds version of Unitree robot is 0.10.2. To communicate with Unitree robots using ROS2, it is necessary to change the dds implementation. See：https://docs.ros.org/en/foxy/Concepts/About-Different-Middleware-Vendors.html
-
+2-2Compile cyclone dds
+(The cyclonedds version of Unitree robot is 0.10.2. To communicate with Unitree robots using ROS2, it is necessary to change the dds implementation. See：https://docs.ros.org/en/foxy/Concepts/About-Different-Middleware-Vendors.html
 Before compiling cyclonedds, please ensure that ros2 environment has **NOT** been sourced when starting the terminal. Otherwise, it may cause errors in compilation.
+If "source/opt/ros/foxy/setup. bash" has been added to the ~/.bashrc file when installing ROS2, it needs to be commented out:)
+# source /opt/ros/humble/setup.bash 
 
-If "source/opt/ros/foxy/setup. bash" has been added to the ~/.bashrc file when installing ROS2, it needs to be commented out:
-
-```bash
-sudo apt install gedit
-sudo gedit ~/.bashrc
-``` 
-```bash
-# source /opt/ros/foxy/setup.bash 
-```
-
-
-Compile cyclone-dds
-```bash
-cd ~/unitree_ros2/cyclonedds_ws/src
-git clone https://github.com/ros2/rmw_cyclonedds -b foxy
+cd ./unitree_ros2/cyclonedds_ws/src
+git clone https://github.com/ros2/rmw_cyclonedds -b humble
 git clone https://github.com/eclipse-cyclonedds/cyclonedds -b releases/0.10.x 
 cd ..
 colcon build --packages-select cyclonedds #Compile cyclone-dds package
-```
 
-### 3. Compile unitree_go and unitree_api packages
-After compiling cyclone-dds, ROS2 dependencies is required for compilation of the unitree_go and unitree_api packages. Therefore, before compiling, it is necessary to source the environment of ROS2.
-```bash
-source /opt/ros/foxy/setup.bash # source ROS2 environment
+source /opt/ros/humble/setup.bash # source ROS2 environment
 colcon build # Compile all packages in the workspace
 ```
 
